@@ -18,6 +18,9 @@ public class GJ25Player : MonoBehaviour
     Animator _ani;
     int _idleAnimation;
     int _moveAnimation;
+
+    [SerializeField]
+    GJ25Portal _nearbyPortal;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -53,8 +56,17 @@ public class GJ25Player : MonoBehaviour
         _interact.action.started -= Interact;
     }
 
+    public void SetNearbyPortal(GJ25Portal portal)
+    {
+        _nearbyPortal = portal;
+    }
+
     private void Interact(InputAction.CallbackContext context)
     {
         print("Interacted!");
+        if (_nearbyPortal)
+        {
+            transform.position = _nearbyPortal.PortalToLocation.position;
+        }
     }
 }
