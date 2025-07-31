@@ -23,7 +23,29 @@ public class GJ25Player : MonoBehaviour
     [SerializeField]
     GJ25Portal _nearbyPortal;
 
+    [SerializeField]
+    GJ25Barrel _nearbyBarrel;
+
     float _targetYPos;
+
+    bool _carryingDrink;
+    [SerializeField]
+    GameObject _greenDrinkCarried;
+    [SerializeField]
+    GameObject _blueDrinkCarried;
+
+    [SerializeField]
+    CurrentLevel _currentLevel;
+
+    public bool CarryingDrink 
+    { 
+        get => _carryingDrink; 
+        set => _carryingDrink = value; 
+    }
+
+    [SerializeField]
+    int _gold;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -75,6 +97,11 @@ public class GJ25Player : MonoBehaviour
         _nearbyPortal = portal;
     }
 
+    public void SetNearbyBarrel(GJ25Barrel barrel)
+    {
+        _nearbyBarrel = barrel;
+    }
+
     private void Interact(InputAction.CallbackContext context)
     {
         print("Interacted!");
@@ -86,6 +113,41 @@ public class GJ25Player : MonoBehaviour
             transform.position = destination;
             _playerCC.enabled = true;
             _targetYPos = destination.y;
+            _currentLevel = _nearbyPortal.Level;
         }
+        else if (_nearbyBarrel && _nearbyBarrel.DrinkCost <= _gold)
+        {
+            _gold -= _nearbyBarrel.DrinkCost;
+            _nearbyBarrel.InteractWithBarrel();
+        }
+    }
+
+    public void GiveDrink(Drink drink)
+    {
+        _carryingDrink = true;
+        if (drink == Drink.Green)
+        {
+            _greenDrinkCarried.SetActive(true);
+        }
+        else if (drink == Drink.Blue)
+        {
+            _blueDrinkCarried.SetActive(true);
+        }
+    }
+
+    public enum CurrentLevel
+    {
+        Base,
+        One,
+        Two,
+        Three,
+        Four,
+        Five
+    }
+
+    public enum Drink
+    {
+        Green,
+        Blue
     }
 }

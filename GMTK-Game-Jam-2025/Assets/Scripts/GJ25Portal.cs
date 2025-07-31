@@ -6,6 +6,7 @@ public class GJ25Portal : MonoBehaviour
     GJ25Player _player;
     [SerializeField]
     Transform _portalToLocation;
+    public GJ25Player.CurrentLevel Level;
     public Transform PortalToLocation 
     { 
         get => _portalToLocation;
