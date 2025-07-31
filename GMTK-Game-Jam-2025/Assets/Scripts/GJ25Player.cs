@@ -26,22 +26,32 @@ public class GJ25Player : MonoBehaviour
     [SerializeField]
     GJ25Barrel _nearbyBarrel;
 
+    [SerializeField]
+    GJ25Customer _nearbyCustomer;
+
     float _targetYPos;
 
-    bool _carryingDrink;
+    Drink _currentDrinkCarrying;
     [SerializeField]
     GameObject _greenDrinkCarried;
     [SerializeField]
     GameObject _blueDrinkCarried;
+    [SerializeField]
+    GameObject _purpleDrinkCarried;
+    [SerializeField]
+    GameObject _orangeDrinkCarried;
+    [SerializeField]
+    GameObject _redDrinkCarried;
 
     [SerializeField]
     CurrentLevel _currentLevel;
 
-    public bool CarryingDrink 
+    public Drink CarryingDrink 
     { 
-        get => _carryingDrink; 
-        set => _carryingDrink = value; 
+        get => _currentDrinkCarrying; 
+        set => _currentDrinkCarrying = value; 
     }
+    public int Gold { get => _gold; set => _gold = value; }
 
     [SerializeField]
     int _gold;
@@ -102,6 +112,11 @@ public class GJ25Player : MonoBehaviour
         _nearbyBarrel = barrel;
     }
 
+    public void SetNearbyCustomer(GJ25Customer customer)
+    {
+        _nearbyCustomer = customer;
+    }
+
     private void Interact(InputAction.CallbackContext context)
     {
         print("Interacted!");
@@ -115,23 +130,43 @@ public class GJ25Player : MonoBehaviour
             _targetYPos = destination.y;
             _currentLevel = _nearbyPortal.Level;
         }
-        else if (_nearbyBarrel && _nearbyBarrel.DrinkCost <= _gold)
+        else if (_nearbyBarrel)
         {
-            _gold -= _nearbyBarrel.DrinkCost;
             _nearbyBarrel.InteractWithBarrel();
+        }
+        else if (_nearbyCustomer && _nearbyCustomer.ReadyForDrink && _nearbyCustomer.DesiredDrink == _currentDrinkCarrying)
+        {
+            _gold += _nearbyCustomer.Payment;
+            _nearbyCustomer.InteractWithCustomer();
+            _currentDrinkCarrying = Drink.None;
+            _greenDrinkCarried.SetActive(false);
+            _blueDrinkCarried.SetActive(false);
+            _purpleDrinkCarried.SetActive(false);
+            _orangeDrinkCarried.SetActive(false);
+            _redDrinkCarried.SetActive(false);
         }
     }
 
     public void GiveDrink(Drink drink)
     {
-        _carryingDrink = true;
-        if (drink == Drink.Green)
+        _currentDrinkCarrying = drink;
+        switch (drink)
         {
-            _greenDrinkCarried.SetActive(true);
-        }
-        else if (drink == Drink.Blue)
-        {
-            _blueDrinkCarried.SetActive(true);
+            case Drink.Green:
+                _greenDrinkCarried.SetActive(true);
+                break;
+            case Drink.Blue:
+                _blueDrinkCarried.SetActive(true);
+                break;
+            case Drink.Purple:
+                _purpleDrinkCarried.SetActive(true);
+                break;
+            case Drink.Orange:
+                _orangeDrinkCarried.SetActive(true);
+                break;
+            case Drink.Red:
+                _redDrinkCarried.SetActive(true);
+                break;
         }
     }
 
@@ -147,7 +182,11 @@ public class GJ25Player : MonoBehaviour
 
     public enum Drink
     {
+        None,
         Green,
-        Blue
+        Blue,
+        Purple,
+        Orange,
+        Red
     }
 }

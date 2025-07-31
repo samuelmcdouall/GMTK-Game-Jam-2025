@@ -7,7 +7,6 @@ public class GJ25Barrel : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField]
     GJ25Player _player;
-    bool _playerNearby;
     [SerializeField]
     BarrelStatus _barrelStatus;
     [SerializeField]
@@ -29,7 +28,6 @@ public class GJ25Barrel : MonoBehaviour
     float _flashInterval;
     float _flashTimer;
 
-    public int DrinkCost { get => _drinkCost; set => _drinkCost = value; }
 
     void Start()
     {
@@ -93,8 +91,9 @@ public class GJ25Barrel : MonoBehaviour
 
     public void InteractWithBarrel()
     {
-        if (_barrelStatus == BarrelStatus.Idle)
+        if (_barrelStatus == BarrelStatus.Idle && _drinkCost <= _player.Gold)
         {
+            _player.Gold -= _drinkCost;
             _barrelStatus = BarrelStatus.Brewing;
             _timer = _brewingTime;
             _brewingSlider.value = 0.0f;
@@ -106,7 +105,7 @@ public class GJ25Barrel : MonoBehaviour
         }
         else if (_barrelStatus == BarrelStatus.DrinkReady || _barrelStatus == BarrelStatus.DrinkFlashing)
         {
-            if (!_player.CarryingDrink)
+            if (_player.CarryingDrink == GJ25Player.Drink.None)
             {
                 _player.GiveDrink(_drinkType);
                 _drink.SetActive(false);
