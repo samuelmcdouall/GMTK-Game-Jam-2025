@@ -6,11 +6,8 @@ public class GJ25Portal : MonoBehaviour
     GJ25Player _player;
     [SerializeField]
     Transform _portalToLocation;
-    public GJ25Player.CurrentLevel Level;
-    public Transform PortalToLocation 
-    { 
-        get => _portalToLocation;
-    }
+    [SerializeField]
+    GJ25Player.CurrentLevel _level;
 
     void Start()
     {
@@ -25,19 +22,23 @@ public class GJ25Portal : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        //if (other.gameObject.CompareTag("Player"))
+        //{
+        //    print("Nearby portal");
+        //    _player.SetNearbyPortal(this);
+        //}
         if (other.gameObject.CompareTag("Player"))
         {
-            print("Nearby portal");
-            _player.SetNearbyPortal(this);
+            _player.TeleportPlayer(_portalToLocation.position, _level);
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            _player.SetNearbyPortal(null);
-        }
+        //if (other.gameObject.CompareTag("Player"))
+        //{
+        //    _player.SetNearbyPortal(null);
+        //}
     }
 
 
