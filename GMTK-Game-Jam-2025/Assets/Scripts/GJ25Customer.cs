@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class GJ25Customer : MonoBehaviour
 {
@@ -14,6 +13,8 @@ public class GJ25Customer : MonoBehaviour
     int _payment;
     [SerializeField]
     GameObject _readyIcon;
+    [SerializeField]
+    GJ25GameManager _gameManager;
     //[SerializeField]
     //float _bonusPayment;
 
@@ -51,6 +52,7 @@ public class GJ25Customer : MonoBehaviour
     public void InteractWithCustomer()
     {
         ReadyForDrink = false;
+        _gameManager.PutCustomerBackInNotOrdered(this, _desiredDrink);
     }
 
     void OnTriggerEnter(Collider other)

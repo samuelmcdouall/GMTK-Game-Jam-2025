@@ -46,12 +46,23 @@ public class GJ25Player : MonoBehaviour
     [SerializeField]
     CurrentLevel _currentLevel;
 
+    [SerializeField]
+    GJ25GameManager _gameManager;
+
     public Drink CarryingDrink 
     { 
         get => _currentDrinkCarrying; 
         set => _currentDrinkCarrying = value; 
     }
-    public int Gold { get => _gold; set => _gold = value; }
+    public int Gold 
+    { 
+        get => _gold;
+        set
+        {
+            _gold = value;
+            _gameManager.SetCurrentGoldText(value);
+        }
+    }
 
     [SerializeField]
     int _gold;
@@ -75,11 +86,11 @@ public class GJ25Player : MonoBehaviour
         if (_moveDirection != Vector3.zero)
         {
             _modelTransform.rotation = Quaternion.LookRotation(_moveDirection);
-            _ani.Play(_moveAnimation);
+            //_ani.Play(_moveAnimation);
         }
         else
         {
-            _ani.Play(_idleAnimation);
+            //_ani.Play(_idleAnimation);
         }
     }
 
@@ -120,23 +131,17 @@ public class GJ25Player : MonoBehaviour
     private void Interact(InputAction.CallbackContext context)
     {
         print("Interacted!");
-        if (_nearbyPortal)
-        {
-            Vector3 destination = _nearbyPortal.PortalToLocation.position;
-            print($"Going to portal location: {destination}");
-            _playerCC.enabled = false;
-            transform.position = destination;
-            _playerCC.enabled = true;
-            _targetYPos = destination.y;
-            _currentLevel = _nearbyPortal.Level;
-        }
-        else if (_nearbyBarrel)
+        //if (_nearbyPortal)
+        //{
+        //    TeleportPlayer();
+        //}
+        if (_nearbyBarrel)
         {
             _nearbyBarrel.InteractWithBarrel();
         }
         else if (_nearbyCustomer && _nearbyCustomer.ReadyForDrink && _nearbyCustomer.DesiredDrink == _currentDrinkCarrying)
         {
-            _gold += _nearbyCustomer.Payment;
+            Gold += _nearbyCustomer.Payment;
             _nearbyCustomer.InteractWithCustomer();
             _currentDrinkCarrying = Drink.None;
             _greenDrinkCarried.SetActive(false);
@@ -145,6 +150,16 @@ public class GJ25Player : MonoBehaviour
             _orangeDrinkCarried.SetActive(false);
             _redDrinkCarried.SetActive(false);
         }
+    }
+
+    public void TeleportPlayer(Vector3 position, CurrentLevel newLevel)
+    {
+        print($"Going to portal location: {position}");
+        _playerCC.enabled = false;
+        transform.position = position;
+        _playerCC.enabled = true;
+        _targetYPos = position.y;
+        _currentLevel = newLevel;
     }
 
     public void GiveDrink(Drink drink)
