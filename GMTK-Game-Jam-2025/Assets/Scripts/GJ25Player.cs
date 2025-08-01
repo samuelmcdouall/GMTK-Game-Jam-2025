@@ -49,6 +49,8 @@ public class GJ25Player : MonoBehaviour
     [SerializeField]
     GJ25GameManager _gameManager;
 
+    bool _nearTrash;
+
     public Drink CarryingDrink 
     { 
         get => _currentDrinkCarrying; 
@@ -63,6 +65,8 @@ public class GJ25Player : MonoBehaviour
             _gameManager.SetCurrentGoldText(value);
         }
     }
+
+    public bool NearTrash { get => _nearTrash; set => _nearTrash = value; }
 
     [SerializeField]
     int _gold;
@@ -167,13 +171,22 @@ public class GJ25Player : MonoBehaviour
         {
             Gold += _nearbyCustomer.Payment;
             _nearbyCustomer.InteractWithCustomer();
-            _currentDrinkCarrying = Drink.None;
-            _greenDrinkCarried.SetActive(false);
-            _blueDrinkCarried.SetActive(false);
-            _purpleDrinkCarried.SetActive(false);
-            _orangeDrinkCarried.SetActive(false);
-            _redDrinkCarried.SetActive(false);
+            NoLongerCarryingDrink();
         }
+        else if (_nearTrash)
+        {
+            NoLongerCarryingDrink();
+        }
+    }
+
+    private void NoLongerCarryingDrink()
+    {
+        _currentDrinkCarrying = Drink.None;
+        _greenDrinkCarried.SetActive(false);
+        _blueDrinkCarried.SetActive(false);
+        _purpleDrinkCarried.SetActive(false);
+        _orangeDrinkCarried.SetActive(false);
+        _redDrinkCarried.SetActive(false);
     }
 
     public void TeleportPlayer(Vector3 position, CurrentLevel newLevel)
