@@ -67,6 +67,8 @@ public class GJ25Player : MonoBehaviour
     [SerializeField]
     int _gold;
 
+    Vector3 _startingPos;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -74,31 +76,53 @@ public class GJ25Player : MonoBehaviour
         _idleAnimation = Animator.StringToHash("Idle");
         _moveAnimation = Animator.StringToHash("Move");
         _targetYPos = 0.5f;
+        KeepPlayerLevel();
+        _startingPos = transform.position;
+        print(_startingPos);
+
+    }
+
+    public void ResetPosition()
+    {
+        _currentLevel = CurrentLevel.Base;
+        _targetYPos = 0.5f;
+        _playerCC.enabled = false;
+        transform.position = _startingPos;
+        _playerCC.enabled = true;
+        _modelTransform.rotation = Quaternion.identity;
+    }
+
+    private void KeepPlayerLevel()
+    {
+        _playerCC.enabled = false;
+        transform.position = new Vector3(transform.position.x, _targetYPos, transform.position.z);
+        _playerCC.enabled = true;
     }
 
     // Update is called once per frame
     void Update()
     {
         _moveDirection = new Vector3(_move.action.ReadValue<Vector2>().x, 0.0f, _move.action.ReadValue<Vector2>().y);
-        
+
         //transform.position += _moveSpeed * Time.deltaTime * _moveDirection;
-        _playerCC.Move(_moveSpeed * Time.deltaTime * _moveDirection);
-        if (_moveDirection != Vector3.zero)
+        if (_gameManager.CurrentGameState == GJ25GameManager.GameState.NightGameplay)
         {
-            _modelTransform.rotation = Quaternion.LookRotation(_moveDirection);
-            //_ani.Play(_moveAnimation);
-        }
-        else
-        {
-            //_ani.Play(_idleAnimation);
+            _playerCC.Move(_moveSpeed * Time.deltaTime * _moveDirection);
+            if (_moveDirection != Vector3.zero)
+            {
+                _modelTransform.rotation = Quaternion.LookRotation(_moveDirection);
+                //_ani.Play(_moveAnimation);
+            }
+            else
+            {
+                //_ani.Play(_idleAnimation);
+            }
         }
     }
 
     private void LateUpdate()
     {
-        _playerCC.enabled = false;
-        transform.position = new Vector3(transform.position.x, _targetYPos, transform.position.z);
-        _playerCC.enabled = true;
+        KeepPlayerLevel();
     }
 
 

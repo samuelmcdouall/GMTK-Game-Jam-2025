@@ -40,7 +40,7 @@ public class GJ25Customer : MonoBehaviour
 
     void Start()
     {
-        ReadyForDrink = true;
+        //ReadyForDrink = true;
     }
 
     // Update is called once per frame

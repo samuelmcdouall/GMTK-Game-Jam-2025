@@ -27,6 +27,8 @@ public class GJ25Barrel : MonoBehaviour
     [SerializeField]
     float _flashInterval;
     float _flashTimer;
+    [SerializeField]
+    bool _unlimitedLife;
 
 
     void Start()
@@ -52,7 +54,7 @@ public class GJ25Barrel : MonoBehaviour
                 _timer -= Time.deltaTime;
             }
         }
-        else if (_barrelStatus == BarrelStatus.DrinkReady)
+        else if (_barrelStatus == BarrelStatus.DrinkReady && !_unlimitedLife)
         {
             if (_timer < 0.0f)
             {

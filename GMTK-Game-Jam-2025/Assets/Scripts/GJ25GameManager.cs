@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GJ25GameManager : MonoBehaviour
 {
@@ -10,12 +11,22 @@ public class GJ25GameManager : MonoBehaviour
     [SerializeField]
     int _targetGold;
     int _currentNight;
+
+    [SerializeField]
+    float _realTimePerGameHour; // in seconds
+    [SerializeField]
+    float _hourTimer;
+    [SerializeField]
+    TMP_Text _levelTime;
+    [SerializeField]
+    int _gameHourTime;
     
 
     [SerializeField]
     float _minOrderTime;
     [SerializeField]
     float _maxOrderTime;
+    [SerializeField]
     float _orderTimer;
 
     [SerializeField]
@@ -26,19 +37,19 @@ public class GJ25GameManager : MonoBehaviour
     GJ25DrinkOrderChances _nightThreeOnwardsChances;
 
     [SerializeField]
-    List<GJ25Customer> _greenCustomers;
+    GameObject _greenCustomers;
     List<GJ25Customer> _notOrderedGreenCustomers = new List<GJ25Customer>();
     [SerializeField]
-    List<GJ25Customer> _blueCustomers;
+    GameObject _blueCustomers;
     List<GJ25Customer> _notOrderedBlueCustomers = new List<GJ25Customer>();
     [SerializeField]
-    List<GJ25Customer> _purpleCustomers;
+    GameObject _purpleCustomers;
     List<GJ25Customer> _notOrderedPurpleCustomers = new List<GJ25Customer>();
     [SerializeField]
-    List<GJ25Customer> _orangeCustomers;
+    GameObject _orangeCustomers;
     List<GJ25Customer> _notOrderedOrangeCustomers = new List<GJ25Customer>();
     [SerializeField]
-    List<GJ25Customer> _redCustomers;
+    GameObject _redCustomers;
     List<GJ25Customer> _notOrderedRedCustomers = new List<GJ25Customer>();
 
     [SerializeField]
@@ -86,29 +97,45 @@ public class GJ25GameManager : MonoBehaviour
     [SerializeField]
     TMP_Text _waitingRedDrinksText;
 
+    [SerializeField]
+    Canvas _gameOverCanvas;
+    [SerializeField]
+    TMP_Text _gameOverText;
+
+    public GameState CurrentGameState { get => _currentGameState; set => _currentGameState = value; }
+
     void Start()
     {
-        foreach (GJ25Customer customer in _greenCustomers)
+        _instructionsCanvas.gameObject.SetActive(true);
+        foreach (Transform customer in _greenCustomers.transform)
         {
-            _notOrderedGreenCustomers.Add(customer);
+            _notOrderedGreenCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
         }
-        foreach (GJ25Customer customer in _blueCustomers)
+        foreach (Transform customer in _blueCustomers.transform)
         {
-            _notOrderedBlueCustomers.Add(customer);
+            _notOrderedBlueCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
         }
-        foreach (GJ25Customer customer in _purpleCustomers)
+        foreach (Transform customer in _purpleCustomers.transform)
         {
-            _notOrderedPurpleCustomers.Add(customer);
+            _notOrderedPurpleCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
         }
-        foreach (GJ25Customer customer in _orangeCustomers)
+        foreach (Transform customer in _orangeCustomers.transform)
         {
-            _notOrderedOrangeCustomers.Add(customer);
+            _notOrderedOrangeCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
         }
-        foreach (GJ25Customer customer in _redCustomers)
+        foreach (Transform customer in _redCustomers.transform)
         {
-            _notOrderedRedCustomers.Add(customer);
+            _notOrderedRedCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
         }
         _orderTimer = Random.Range(_minOrderTime, _maxOrderTime);
+        _hourTimer = _realTimePerGameHour;
+        _waitingGreenDrinksText.text = "0";
+        _waitingBlueDrinksText.text = "0";
+        _waitingPurpleDrinksText.text = "0";
+        _waitingOrangeDrinksText.text = "0";
+        _waitingRedDrinksText.text = "0";
+        _levelTime.text = $"{_gameHourTime} PM";
+        _targetGold = 100; // will be 150 after first day
     }
 
     // Update is called once per frame
@@ -138,10 +165,64 @@ public class GJ25GameManager : MonoBehaviour
             {
                 _orderTimer -= Time.deltaTime;
             }
+
+            if (_hourTimer < 0.0f)
+            {
+                if (_gameHourTime == 11)
+                {
+                    if (_player.Gold >= _targetGold)
+                    {
+                        _orderTimer = Random.Range(_minOrderTime, _maxOrderTime);
+                        _hourTimer = _realTimePerGameHour;
+                        _waitingGreenDrinksText.text = "0";
+                        _waitingBlueDrinksText.text = "0";
+                        _waitingPurpleDrinksText.text = "0";
+                        _waitingOrangeDrinksText.text = "0";
+                        _waitingRedDrinksText.text = "0";
+                        _gameHourTime = 7;
+                        _levelTime.text = $"{_gameHourTime} PM";
+                        NewNight();
+                        _currentGameState = GameState.NightIntro;
+                        _player.ResetPosition();
+                    }
+                    else
+                    {
+                        _gameCanvas.gameObject.SetActive(false);
+                        _currentGameState = GameState.GameOver;
+                        string plural = "nights";
+                        if (_currentNight == 1)
+                        {
+                            plural = "night";
+                        }
+                        _gameOverText.text = $"Game Over!\n\nYou were open for {_currentNight} {plural} and gathered {_player.Gold} gold!";
+                        _gameOverCanvas.gameObject.SetActive(true);
+                    }
+                }
+                else
+                {
+                    _gameHourTime++;
+                    _levelTime.text = $"{_gameHourTime} PM";
+                    _hourTimer = _realTimePerGameHour;
+                }
+            }
+            else
+            {
+                _hourTimer -= Time.deltaTime;
+            }
         }
     }
 
-    public void ContinueFromInstructions()
+    public void ClickRetryButton()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void ClickQuitButton()
+    {
+        Application.Quit();
+    }
+
+    public void ClickStartButton()
     {
         _instructionsCanvas.gameObject.SetActive(false);
         NewNight();
@@ -183,17 +264,17 @@ public class GJ25GameManager : MonoBehaviour
     void NewNight()
     {
         _currentNight++;
-        if (_targetGold <= 400)
+        if (_targetGold <= 250)
+        {
+            _targetGold += 50;
+        }
+        else if (_targetGold <= 900)
         {
             _targetGold += 100;
         }
-        else if (_targetGold <= 1250)
-        {
-            _targetGold += 250;
-        }
         else
         {
-            _targetGold += 500;
+            _targetGold += 200;
         }
         _introCanvas.gameObject.SetActive(true);
         _gameCanvas.gameObject.SetActive(false);
@@ -230,41 +311,51 @@ public class GJ25GameManager : MonoBehaviour
         float purpleChance = blueChance + chances.PurpleDrinkChance;
         float orangeChance = purpleChance + chances.OrangeDrinkChance;
         float redChance = orangeChance + chances.RedDrinkChance;
-        if (rand < greenChance)
+        if (rand < greenChance && _notOrderedGreenCustomers.Count > 0)
         {
             int r = Random.Range(0, _notOrderedGreenCustomers.Count - 1);
             GJ25Customer chosenCustomer = _notOrderedGreenCustomers[r];
             chosenCustomer.ReadyForDrink = true;
             _notOrderedGreenCustomers.Remove(chosenCustomer);
+            _waitingGreenDrinks++;
+            _waitingGreenDrinksText.text = $"{_waitingGreenDrinks}";
 
         }
-        else if (rand < blueChance)
+        else if (rand < blueChance && _notOrderedBlueCustomers.Count > 0)
         {
             int r = Random.Range(0, _notOrderedBlueCustomers.Count - 1);
             GJ25Customer chosenCustomer = _notOrderedBlueCustomers[r];
             chosenCustomer.ReadyForDrink = true;
             _notOrderedBlueCustomers.Remove(chosenCustomer);
+            _waitingBlueDrinks++;
+            _waitingBlueDrinksText.text = $"{_waitingBlueDrinks}";
         }
-        else if (rand < purpleChance)
+        else if (rand < purpleChance && _notOrderedPurpleCustomers.Count > 0)
         {
             int r = Random.Range(0, _notOrderedPurpleCustomers.Count - 1);
             GJ25Customer chosenCustomer = _notOrderedPurpleCustomers[r];
             chosenCustomer.ReadyForDrink = true;
             _notOrderedPurpleCustomers.Remove(chosenCustomer);
+            _waitingPurpleDrinks++;
+            _waitingPurpleDrinksText.text = $"{_waitingPurpleDrinks}";
         }
-        else if (rand < orangeChance)
+        else if (rand < orangeChance && _notOrderedOrangeCustomers.Count > 0 && chances.OrangeDrinkChance != 0.0f) // check for orange and red drinks as they should not be spawning in the 1st/2nd level, even if the other levels are full up
         {
             int r = Random.Range(0, _notOrderedOrangeCustomers.Count - 1);
             GJ25Customer chosenCustomer = _notOrderedOrangeCustomers[r];
             chosenCustomer.ReadyForDrink = true;
             _notOrderedOrangeCustomers.Remove(chosenCustomer);
+            _waitingOrangeDrinks++;
+            _waitingOrangeDrinksText.text = $"{_waitingOrangeDrinks}";
         }
-        else if (rand < redChance)
+        else if (rand < redChance && _notOrderedRedCustomers.Count > 0 && chances.RedDrinkChance != 0.0f)
         {
             int r = Random.Range(0, _notOrderedRedCustomers.Count - 1);
             GJ25Customer chosenCustomer = _notOrderedRedCustomers[r];
             chosenCustomer.ReadyForDrink = true;
             _notOrderedRedCustomers.Remove(chosenCustomer);
+            _waitingRedDrinks++;
+            _waitingRedDrinksText.text = $"{_waitingRedDrinks}";
         }
     }
 
@@ -275,4 +366,6 @@ public class GJ25GameManager : MonoBehaviour
         NightGameplay,
         GameOver
     }
+
+    // check this is running with UI, for one infinite night, then do others
 }
