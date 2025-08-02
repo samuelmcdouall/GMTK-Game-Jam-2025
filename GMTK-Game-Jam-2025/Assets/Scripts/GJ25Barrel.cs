@@ -30,10 +30,12 @@ public class GJ25Barrel : MonoBehaviour
     [SerializeField]
     bool _unlimitedLife;
 
+    GJ25SFXManager _sfxManager;
+
 
     void Start()
     {
-
+        _sfxManager = GameObject.FindGameObjectWithTag("SFXManager").GetComponent<GJ25SFXManager>();
     }
 
     public void ResetBarrel()
@@ -57,6 +59,7 @@ public class GJ25Barrel : MonoBehaviour
                 _drink.SetActive(true);
                 _barrelStatus = BarrelStatus.DrinkReady;
                 _timer = _readyPeriod;
+                _sfxManager.PlaySFXClip(_sfxManager.BrewReady);
             }
             else
             {
@@ -109,6 +112,7 @@ public class GJ25Barrel : MonoBehaviour
             _timer = _brewingTime;
             _brewingSlider.value = 0.0f;
             _brewingSlider.gameObject.SetActive(true);
+            _sfxManager.PlaySFXClip(_sfxManager.BrewKickOff);
         }
         else if (_barrelStatus == BarrelStatus.Brewing)
         {
@@ -121,6 +125,7 @@ public class GJ25Barrel : MonoBehaviour
                 _player.GiveDrink(_drinkType);
                 _drink.SetActive(false);
                 _barrelStatus = BarrelStatus.Idle;
+                _sfxManager.PlaySFXClip(_sfxManager.PickUpDrink);
             }
         }
     }

@@ -236,7 +236,7 @@ public class GJ25GameManager : MonoBehaviour
                         _levelTime.text = $"{_gameHourTime} PM";
                         NewNight();
                         _currentGameState = GameState.NightIntro;
-                        _player.ResetPosition();
+                        _player.ResetPlayer();
                     }
                     else
                     {

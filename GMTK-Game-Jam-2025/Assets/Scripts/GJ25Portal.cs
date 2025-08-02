@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class GJ25Portal : MonoBehaviour
 {
@@ -8,10 +9,11 @@ public class GJ25Portal : MonoBehaviour
     Transform _portalToLocation;
     [SerializeField]
     GJ25Player.CurrentLevel _level;
+    GJ25SFXManager _sfxManager;
 
     void Start()
     {
-        
+        _sfxManager = GameObject.FindGameObjectWithTag("SFXManager").GetComponent<GJ25SFXManager>();
     }
 
     // Update is called once per frame
@@ -30,6 +32,7 @@ public class GJ25Portal : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             _player.TeleportPlayer(_portalToLocation.position, _level);
+            _sfxManager.PlaySFXClip(_sfxManager.PortalTraverse);
         }
     }
 

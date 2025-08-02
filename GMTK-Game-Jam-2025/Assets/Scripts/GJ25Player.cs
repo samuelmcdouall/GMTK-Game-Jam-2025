@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.VFX;
 
 public class GJ25Player : MonoBehaviour
 {
@@ -72,6 +73,7 @@ public class GJ25Player : MonoBehaviour
     int _gold;
 
     Vector3 _startingPos;
+    GJ25SFXManager _sfxManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -83,10 +85,11 @@ public class GJ25Player : MonoBehaviour
         KeepPlayerLevel();
         _startingPos = transform.position;
         print(_startingPos);
+        _sfxManager = GameObject.FindGameObjectWithTag("SFXManager").GetComponent<GJ25SFXManager>();
 
     }
 
-    public void ResetPosition()
+    public void ResetPlayer()
     {
         _currentLevel = CurrentLevel.Base;
         _targetYPos = 0.5f;
@@ -94,6 +97,7 @@ public class GJ25Player : MonoBehaviour
         transform.position = _startingPos;
         _playerCC.enabled = true;
         _modelTransform.rotation = Quaternion.identity;
+        NoLongerCarryingDrink();
     }
 
     private void KeepPlayerLevel()
@@ -172,10 +176,12 @@ public class GJ25Player : MonoBehaviour
             Gold += _nearbyCustomer.Payment;
             _nearbyCustomer.InteractWithCustomer();
             NoLongerCarryingDrink();
+            _sfxManager.PlaySFXClip(_sfxManager.GiveDrink);
         }
         else if (_nearTrash)
         {
             NoLongerCarryingDrink();
+            _sfxManager.PlaySFXClip(_sfxManager.TrashDrink);
         }
     }
 
