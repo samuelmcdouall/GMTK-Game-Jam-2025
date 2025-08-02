@@ -9,11 +9,9 @@ public class GJ25Trash : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            //print("Nearby barrel");
             _player.NearTrash = true;
         }
     }
-
     void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))

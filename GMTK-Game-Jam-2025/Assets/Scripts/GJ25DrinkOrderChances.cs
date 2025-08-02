@@ -6,5 +6,4 @@ public struct GJ25DrinkOrderChances
     public float PurpleDrinkChance;
     public float OrangeDrinkChance;
     public float RedDrinkChance;
-
 }

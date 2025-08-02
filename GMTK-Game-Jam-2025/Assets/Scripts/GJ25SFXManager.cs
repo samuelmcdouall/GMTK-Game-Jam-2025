@@ -18,24 +18,16 @@ public class GJ25SFXManager : MonoBehaviour
     public AudioClip TrashDrink;
     public AudioClip PortalTraverse;
     public AudioClip GiveDrink;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         _sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1.0f);
         _sfxSlider.value = _sfxVolume;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void PlaySFXClip(AudioClip clip)
     {
         _sfxAS.PlayOneShot(clip, _sfxVolume);
     }
-
     public void OnChangeSFXSlider()
     {
         PlayerPrefs.SetFloat("SFXVolume", _sfxSlider.value);

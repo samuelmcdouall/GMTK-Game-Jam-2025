@@ -1,10 +1,8 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GJ25Barrel : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField]
     GJ25Player _player;
     [SerializeField]
@@ -29,25 +27,12 @@ public class GJ25Barrel : MonoBehaviour
     float _flashTimer;
     [SerializeField]
     bool _unlimitedLife;
-
     GJ25SFXManager _sfxManager;
-
 
     void Start()
     {
         _sfxManager = GameObject.FindGameObjectWithTag("SFXManager").GetComponent<GJ25SFXManager>();
     }
-
-    public void ResetBarrel()
-    {
-        _brewingSlider.value = 0.0f; 
-        _brewingSlider.gameObject.SetActive(false);
-        _barrelStatus = BarrelStatus.Idle;
-        _drink.SetActive(false);
-        _timer = _brewingTime;
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (_barrelStatus == BarrelStatus.Brewing)
@@ -101,8 +86,6 @@ public class GJ25Barrel : MonoBehaviour
             }
         }
     }
-
-
     public void InteractWithBarrel()
     {
         if (_barrelStatus == BarrelStatus.Idle && _drinkCost <= _player.Gold)
@@ -129,18 +112,21 @@ public class GJ25Barrel : MonoBehaviour
             }
         }
     }
-
-
-
+    public void ResetBarrel()
+    {
+        _brewingSlider.value = 0.0f;
+        _brewingSlider.gameObject.SetActive(false);
+        _barrelStatus = BarrelStatus.Idle;
+        _drink.SetActive(false);
+        _timer = _brewingTime;
+    }
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            //print("Nearby barrel");
             _player.SetNearbyBarrel(this);
         }
     }
-
     void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -148,7 +134,6 @@ public class GJ25Barrel : MonoBehaviour
             _player.SetNearbyBarrel(null);
         }
     }
-
     public enum BarrelStatus
     {
         Idle,

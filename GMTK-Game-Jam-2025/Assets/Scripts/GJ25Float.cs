@@ -8,12 +8,7 @@ public class GJ25Float : MonoBehaviour
     private float floatTimer;
     [SerializeField]
     GameObject _pauseCanvas;
-    void Start()
-    {
-        print(gameObject.name);
-    }
 
-    // Update is called once per frame
     void Update()
     {
         if (!_pauseCanvas.activeSelf)

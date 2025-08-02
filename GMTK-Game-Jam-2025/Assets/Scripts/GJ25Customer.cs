@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class GJ25Customer : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField]
     bool _readyForDrink;
     [SerializeField]
@@ -15,11 +14,9 @@ public class GJ25Customer : MonoBehaviour
     GameObject _readyIcon;
     [SerializeField]
     GJ25GameManager _gameManager;
-    //[SerializeField]
-    //float _bonusPayment;
 
-    public bool ReadyForDrink 
-    { 
+    public bool ReadyForDrink
+    {
         get => _readyForDrink;
         set
         {
@@ -27,43 +24,28 @@ public class GJ25Customer : MonoBehaviour
             _readyIcon.SetActive(value);
         }
     }
-    public GJ25Player.Drink DesiredDrink 
-    { 
-        get => _desiredDrink; 
-        set => _desiredDrink = value; 
-    }
-    public int Payment 
-    { 
-        get => _payment; 
-        set => _payment = value; 
-    }
-
-    void Start()
+    public GJ25Player.Drink DesiredDrink
     {
-        //ReadyForDrink = true;
+        get => _desiredDrink;
+        set => _desiredDrink = value;
     }
-
-    // Update is called once per frame
-    void Update()
+    public int Payment
     {
-        
+        get => _payment;
+        set => _payment = value;
     }
-
     public void InteractWithCustomer()
     {
         ReadyForDrink = false;
         _gameManager.PutCustomerBackInNotOrdered(this, _desiredDrink);
     }
-
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            //print("Nearby barrel");
             _player.SetNearbyCustomer(this);
         }
     }
-
     void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -71,5 +53,4 @@ public class GJ25Customer : MonoBehaviour
             _player.SetNearbyCustomer(null);
         }
     }
-
 }
