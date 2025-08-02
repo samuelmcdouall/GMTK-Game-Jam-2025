@@ -126,6 +126,8 @@ public class GJ25GameManager : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
+        print(Application.targetFrameRate);
         _instructionsCanvas.gameObject.SetActive(true);
         ResetNotOrderedLists();
         foreach (GJ25Barrel barrel in _barrels)
@@ -204,13 +206,13 @@ public class GJ25GameManager : MonoBehaviour
         {
             _pauseCanvas.gameObject.SetActive(true);
             Time.timeScale = 0.0f;
-            Cursor.visible = true;
+            //Cursor.visible = true;
         }
         else
         {
             _pauseCanvas.gameObject.SetActive(false);
             Time.timeScale = 1.0f;
-            Cursor.visible = false;
+            //Cursor.visible = false;
         }
     }
 
@@ -376,6 +378,7 @@ public class GJ25GameManager : MonoBehaviour
     {
         _introCanvas.gameObject.SetActive(false);
         _gameCanvas.gameObject.SetActive(true);
+        //Cursor.visible = false;
         _nightText.text = $"Night: {_currentNight}";
         _currentGoldText.text = $"Gold: {_player.Gold}";
         _targetGoldText.text = $"Target Gold: {_targetGold}";
