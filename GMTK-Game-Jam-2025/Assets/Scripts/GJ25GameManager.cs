@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
@@ -116,6 +117,11 @@ public class GJ25GameManager : MonoBehaviour
     //[SerializeField]
     //TMP_Text _instructionsText;
 
+    [SerializeField]
+    InputActionReference _pause;
+    [SerializeField]
+    Canvas _pauseCanvas;
+
     public GameState CurrentGameState { get => _currentGameState; set => _currentGameState = value; }
 
     void Start()
@@ -178,6 +184,33 @@ public class GJ25GameManager : MonoBehaviour
         {
             _notOrderedRedCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
             customer.gameObject.GetComponent<GJ25Customer>().ReadyForDrink = false;
+        }
+    }
+
+
+    private void OnEnable()
+    {
+        _pause.action.started += Pause;
+    }
+
+    private void OnDisable()
+    {
+        _pause.action.started -= Pause;
+    }
+
+    void Pause(InputAction.CallbackContext context)
+    {
+        if (!_pauseCanvas.gameObject.activeSelf)
+        {
+            _pauseCanvas.gameObject.SetActive(true);
+            Time.timeScale = 0.0f;
+            Cursor.visible = true;
+        }
+        else
+        {
+            _pauseCanvas.gameObject.SetActive(false);
+            Time.timeScale = 1.0f;
+            Cursor.visible = false;
         }
     }
 
@@ -318,11 +351,11 @@ public class GJ25GameManager : MonoBehaviour
     void NewNight()
     {
         _currentNight++;
-        if (_targetGold <= 250)
+        if (_targetGold <= 150)
         {
             _targetGold += 50;
         }
-        else if (_targetGold <= 900)
+        else if (_targetGold <= 400)
         {
             _targetGold += 100;
         }

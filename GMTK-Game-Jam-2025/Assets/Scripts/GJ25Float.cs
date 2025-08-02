@@ -6,29 +6,34 @@ public class GJ25Float : MonoBehaviour
     private bool goingUp = true;
     public float floatRate;
     private float floatTimer;
+    [SerializeField]
+    GameObject _pauseCanvas;
     void Start()
     {
-        
+        print(gameObject.name);
     }
 
     // Update is called once per frame
     void Update()
     {
-        floatTimer += Time.deltaTime;
-        transform.Translate(floatSpeed);
-
-        if (goingUp && floatTimer >= floatRate)
+        if (!_pauseCanvas.activeSelf)
         {
-            goingUp = false;
-            floatTimer = 0;
-            floatSpeed = -floatSpeed;
-        }
+            floatTimer += Time.deltaTime;
+            transform.Translate(floatSpeed);
 
-        else if (!goingUp && floatTimer >= floatRate)
-        {
-            goingUp = true;
-            floatTimer = 0;
-            floatSpeed = -floatSpeed;
+            if (goingUp && floatTimer >= floatRate)
+            {
+                goingUp = false;
+                floatTimer = 0;
+                floatSpeed = -floatSpeed;
+            }
+
+            else if (!goingUp && floatTimer >= floatRate)
+            {
+                goingUp = true;
+                floatTimer = 0;
+                floatSpeed = -floatSpeed;
+            }
         }
     }
 }
