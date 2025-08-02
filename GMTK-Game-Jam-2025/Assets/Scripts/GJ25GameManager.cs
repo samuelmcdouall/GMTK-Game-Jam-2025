@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class GJ25GameManager : MonoBehaviour
 {
@@ -112,6 +113,9 @@ public class GJ25GameManager : MonoBehaviour
     [SerializeField]
     List<GJ25Barrel> _barrels;
 
+    //[SerializeField]
+    //TMP_Text _instructionsText;
+
     public GameState CurrentGameState { get => _currentGameState; set => _currentGameState = value; }
 
     void Start()
@@ -132,6 +136,15 @@ public class GJ25GameManager : MonoBehaviour
         _waitingRedDrinksText.text = "0";
         _levelTime.text = $"{_gameHourTime} PM";
         _targetGold = 100; // will be 150 after first day
+
+        //_instructionsText.text = "Your minions have had a long, hard day fighting heroes and they could use a drink! Your new establishment “The Drinking Rings” should help with this! \n\n" +
+        //                         "Use the <color=#FFD500>barrels to brew</color> different drinks. Making a drink <color=#FFD500>costs gold</color> and more expensive ones take <color=#FFD500>longer to brew</color> but can be sold for a <color=#FFD500>higher price</color>\n\n" +
+        //                         "Make sure to <color=#FFD500>pick up the drink</color> after you’ve made it. If you don’t want the drink you’re holding then it can be <color=#FFD500>discarded into the black portal</color> in the center. Be aware once a drink is discarded, it is lost forever!\n\n" +
+        //                         "Use the <color=#FFD500>portals to traverse</color> between the different coloured rings\n\n" +
+        //                         "Each minion will only take the <color=#FFD500>drink associated with their colour ring</color>. For example, those on the <color=#FFD500>blue ring</color> will only take <color=#FFD500>blue drinks</color>\n\n" +
+        //                         "When a minion is <color=#FFD500>ready for a drink</color>, a <color=#FFD500>marker</color> will appear above them. You’ll also see how many minions of each ring wants a drink by the <color=#FFD500>icons in the top right hand corner</color>\n\n" +
+        //                         "To stay open and continue to the next night you’ll need to gather <color=#FFD500>enough gold before closing time</color>\n\n" +
+        //                         "Use WASD to move and E to interact. Good luck!\n\n";
     }
 
     private void ResetNotOrderedLists()
