@@ -36,6 +36,15 @@ public class GJ25Barrel : MonoBehaviour
 
     }
 
+    public void ResetBarrel()
+    {
+        _brewingSlider.value = 0.0f; 
+        _brewingSlider.gameObject.SetActive(false);
+        _barrelStatus = BarrelStatus.Idle;
+        _drink.SetActive(false);
+        _timer = _brewingTime;
+    }
+
     // Update is called once per frame
     void Update()
     {

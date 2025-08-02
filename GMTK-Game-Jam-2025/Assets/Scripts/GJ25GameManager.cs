@@ -102,12 +102,19 @@ public class GJ25GameManager : MonoBehaviour
     [SerializeField]
     TMP_Text _gameOverText;
 
+    [SerializeField]
+    List<GJ25Barrel> _barrels;
+
     public GameState CurrentGameState { get => _currentGameState; set => _currentGameState = value; }
 
     void Start()
     {
         _instructionsCanvas.gameObject.SetActive(true);
         ResetNotOrderedLists();
+        foreach (GJ25Barrel barrel in _barrels)
+        {
+            barrel.ResetBarrel();
+        }
         _orderTimer = Random.Range(_minOrderTime, _maxOrderTime);
         _hourTimer = _realTimePerGameHour;
         _waitingGreenDrinksText.text = "0";
@@ -190,6 +197,10 @@ public class GJ25GameManager : MonoBehaviour
                         _orderTimer = Random.Range(_minOrderTime, _maxOrderTime);
                         _hourTimer = _realTimePerGameHour;
                         ResetNotOrderedLists();
+                        foreach (GJ25Barrel barrel in _barrels)
+                        {
+                            barrel.ResetBarrel();
+                        }
                         _waitingGreenDrinks = 0;
                         _waitingGreenDrinksText.text = "0";
                         _waitingBlueDrinks = 0;
