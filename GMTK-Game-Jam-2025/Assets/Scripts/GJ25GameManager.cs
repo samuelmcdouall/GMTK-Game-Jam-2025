@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GJ25GameManager : MonoBehaviour
 {
@@ -12,10 +13,16 @@ public class GJ25GameManager : MonoBehaviour
     int _targetGold;
     int _currentNight;
 
+    //[SerializeField]
+    //float _realTimePerGameHour; // in seconds
+    //[SerializeField]
+    //float _hourTimer;
     [SerializeField]
-    float _realTimePerGameHour; // in seconds
+    float _totalLevelTime;
     [SerializeField]
-    float _hourTimer;
+    float _levelTimer;
+    [SerializeField]
+    Slider _levelTimeSlider;
     [SerializeField]
     TMP_Text _levelTime;
     [SerializeField]
@@ -116,7 +123,8 @@ public class GJ25GameManager : MonoBehaviour
             barrel.ResetBarrel();
         }
         _orderTimer = Random.Range(_minOrderTime, _maxOrderTime);
-        _hourTimer = _realTimePerGameHour;
+        //_hourTimer = _realTimePerGameHour;
+        _levelTimer = _totalLevelTime;
         _waitingGreenDrinksText.text = "0";
         _waitingBlueDrinksText.text = "0";
         _waitingPurpleDrinksText.text = "0";
@@ -188,14 +196,14 @@ public class GJ25GameManager : MonoBehaviour
                 _orderTimer -= Time.deltaTime;
             }
 
-            if (_hourTimer < 0.0f)
+            if (_levelTimer < 0.0f)
             {
-                if (_gameHourTime == 11)
+                //if (_gameHourTime == 11)
                 {
                     if (_player.Gold >= _targetGold)
                     {
                         _orderTimer = Random.Range(_minOrderTime, _maxOrderTime);
-                        _hourTimer = _realTimePerGameHour;
+                        _levelTimer = _totalLevelTime;
                         ResetNotOrderedLists();
                         foreach (GJ25Barrel barrel in _barrels)
                         {
@@ -230,16 +238,17 @@ public class GJ25GameManager : MonoBehaviour
                         _gameOverCanvas.gameObject.SetActive(true);
                     }
                 }
-                else
-                {
-                    _gameHourTime++;
-                    _levelTime.text = $"{_gameHourTime} PM";
-                    _hourTimer = _realTimePerGameHour;
-                }
+                //else
+                //{
+                //    //_gameHourTime++;
+                //    //_levelTime.text = $"{_gameHourTime} PM";
+                //    //_hourTimer = _realTimePerGameHour;
+                //}
             }
             else
             {
-                _hourTimer -= Time.deltaTime;
+                _levelTimer -= Time.deltaTime;
+                _levelTimeSlider.value = _levelTimer / _totalLevelTime;
             }
         }
     }
