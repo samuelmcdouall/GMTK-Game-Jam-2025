@@ -107,26 +107,7 @@ public class GJ25GameManager : MonoBehaviour
     void Start()
     {
         _instructionsCanvas.gameObject.SetActive(true);
-        foreach (Transform customer in _greenCustomers.transform)
-        {
-            _notOrderedGreenCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
-        }
-        foreach (Transform customer in _blueCustomers.transform)
-        {
-            _notOrderedBlueCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
-        }
-        foreach (Transform customer in _purpleCustomers.transform)
-        {
-            _notOrderedPurpleCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
-        }
-        foreach (Transform customer in _orangeCustomers.transform)
-        {
-            _notOrderedOrangeCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
-        }
-        foreach (Transform customer in _redCustomers.transform)
-        {
-            _notOrderedRedCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
-        }
+        ResetNotOrderedLists();
         _orderTimer = Random.Range(_minOrderTime, _maxOrderTime);
         _hourTimer = _realTimePerGameHour;
         _waitingGreenDrinksText.text = "0";
@@ -136,6 +117,40 @@ public class GJ25GameManager : MonoBehaviour
         _waitingRedDrinksText.text = "0";
         _levelTime.text = $"{_gameHourTime} PM";
         _targetGold = 100; // will be 150 after first day
+    }
+
+    private void ResetNotOrderedLists()
+    {
+        _notOrderedGreenCustomers.Clear();
+        _notOrderedBlueCustomers.Clear();
+        _notOrderedPurpleCustomers.Clear();
+        _notOrderedOrangeCustomers.Clear();
+        _notOrderedRedCustomers.Clear();
+        foreach (Transform customer in _greenCustomers.transform)
+        {
+            _notOrderedGreenCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
+            customer.gameObject.GetComponent<GJ25Customer>().ReadyForDrink = false;
+        }
+        foreach (Transform customer in _blueCustomers.transform)
+        {
+            _notOrderedBlueCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
+            customer.gameObject.GetComponent<GJ25Customer>().ReadyForDrink = false;
+        }
+        foreach (Transform customer in _purpleCustomers.transform)
+        {
+            _notOrderedPurpleCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
+            customer.gameObject.GetComponent<GJ25Customer>().ReadyForDrink = false;
+        }
+        foreach (Transform customer in _orangeCustomers.transform)
+        {
+            _notOrderedOrangeCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
+            customer.gameObject.GetComponent<GJ25Customer>().ReadyForDrink = false;
+        }
+        foreach (Transform customer in _redCustomers.transform)
+        {
+            _notOrderedRedCustomers.Add(customer.gameObject.GetComponent<GJ25Customer>());
+            customer.gameObject.GetComponent<GJ25Customer>().ReadyForDrink = false;
+        }
     }
 
     // Update is called once per frame
@@ -174,10 +189,16 @@ public class GJ25GameManager : MonoBehaviour
                     {
                         _orderTimer = Random.Range(_minOrderTime, _maxOrderTime);
                         _hourTimer = _realTimePerGameHour;
+                        ResetNotOrderedLists();
+                        _waitingGreenDrinks = 0;
                         _waitingGreenDrinksText.text = "0";
+                        _waitingBlueDrinks = 0;
                         _waitingBlueDrinksText.text = "0";
+                        _waitingPurpleDrinks = 0;
                         _waitingPurpleDrinksText.text = "0";
+                        _waitingOrangeDrinks = 0;
                         _waitingOrangeDrinksText.text = "0";
+                        _waitingRedDrinks = 0;
                         _waitingRedDrinksText.text = "0";
                         _gameHourTime = 7;
                         _levelTime.text = $"{_gameHourTime} PM";
@@ -281,7 +302,6 @@ public class GJ25GameManager : MonoBehaviour
         _nightIntroText.text = $"Night: {_currentNight}";
         _currentGoldIntroText.text = $"Gold: {_player.Gold}";
         _targetGoldIntroText.text = $"Target Gold: {_targetGold}";
-        //_player.ResetPlayer();
         Invoke("TurnOffIntroBox", 5.0f);
     }
 
@@ -293,8 +313,23 @@ public class GJ25GameManager : MonoBehaviour
         _nightText.text = $"Night: {_currentNight}";
         _currentGoldText.text = $"Gold: {_player.Gold}";
         _targetGoldText.text = $"Target Gold: {_targetGold}";
-        //_player.CanMove();
         _currentGameState = GameState.NightGameplay;
+
+        // Spawn first drink to get going 
+        GJ25DrinkOrderChances currentChances;
+        if (_currentNight == 1)
+        {
+            currentChances = _nightOneChances;
+        }
+        else if (_currentNight == 2)
+        {
+            currentChances = _nightTwoChances;
+        }
+        else
+        {
+            currentChances = _nightThreeOnwardsChances;
+        }
+        ChooseRandomCustomerToOrder(currentChances);
     }
 
 
